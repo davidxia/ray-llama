@@ -12,24 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ==============================================================================
-FROM us-central1-docker.pkg.dev/tpu-pytorch-releases/docker/xla:nightly_3.8_tpuvm_20230907
-
-USER root
+FROM us-central1-docker.pkg.dev/tpu-pytorch-releases/docker/xla:nightly_3.8_tpuvm_20240201
 
 RUN apt-get -y update && apt-get -y upgrade
 RUN apt-get -y install rsync
 
-COPY ray-3.0.0.dev0-cp38-cp38-manylinux2014_x86_64.whl .
-COPY tokenizer.model .
-
-RUN pip install --upgrade "ray[default]==2.7.0rc0" "ray[serve]==2.7.0rc0"
-RUN pip install ray-3.0.0.dev0-cp38-cp38-manylinux2014_x86_64.whl
-RUN pip install gradio==3.19
+RUN pip install ray[default]==2.9.2
 
 RUN yes | pip uninstall transformers
 RUN pip install transformers[torch]
 
-RUN git clone -b llama2-google-next-training https://github.com/pytorch-tpu/transformers.git
+RUN git clone -b llama2-google-next-training https://github.com/pytorch-tpu/transformers.git \
+    && cd transformers \
+    && git checkout 1bd3bd5001f3a05779d8c0c758ff0aef46538cc7
 RUN yes | pip install transformers/
 RUN rm -rf transformers
 

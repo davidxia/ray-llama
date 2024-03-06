@@ -24,6 +24,9 @@ RUNTIME = {
     "XLA_USE_BF16": "1",
     "XLA_IR_DEBUG": "1",
     "XLA_HLO_DEBUG": "1",
+    "TF_CPP_MIN_LOG_LEVEL": "0",
+    "TPU_STDERR_LOG_LEVEL": "0",
+    "TPU_MIN_LOG_LEVEL": "0",
   }
 }
 
@@ -31,7 +34,7 @@ ARGS_BY_CONFIG = {
     "7B": {
         # Expects to run on a v4-32
         "model_name": "llama2/7B",
-        "per_device_train_batch_size": 16,
+        "per_device_train_batch_size": 8,
         "spmd_2d_sharding": 1,
     },
     "13B": {
@@ -52,7 +55,7 @@ ARGS_BY_CONFIG = {
 
 @ray.remote(resources={"TPU": 4})
 def train_llama(hf_args: Mapping[str, Any]):
-    import socket 
+    import socket
     import torch_xla
     import torch_xla.runtime as xr
     xr.use_spmd()
@@ -73,7 +76,7 @@ def train_llama(hf_args: Mapping[str, Any]):
 def main():
     ray.init(runtime_env=RUNTIME)
 
-    args = ARGS_BY_CONFIG["70B"]
+    args = ARGS_BY_CONFIG["7B"]
     print("Args: ", args)
 
     num_available_tpus = int(ray.available_resources()["TPU"])

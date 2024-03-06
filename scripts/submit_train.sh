@@ -13,8 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ==============================================================================
-export EXTERNAL_HEAD_IP=$(ray get-head-ip cluster/train.yaml)
-export RAY_HEAD_IP=$(gcloud compute instances list | grep $EXTERNAL_HEAD_IP | awk '{print $4}')
-export RAY_ADDRESS="http://${RAY_HEAD_IP}:8265"
+# Below aren't needed if running this code on Ray head node directly
+# export EXTERNAL_HEAD_IP=10.160.194.201
+# export RAY_HEAD_IP=$(gcloud compute instances list | grep $EXTERNAL_HEAD_IP | awk '{print $4}')
+# export RAY_ADDRESS="http://10.160.194.201:8265"
 
 ray job submit --working-dir train/ -- python main.py
